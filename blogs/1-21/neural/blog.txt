@@ -1,0 +1,88 @@
+Machine translation doesn’t translate gender right — unless you make it
+
+Machine translation struggles to translate people’s gender, especially for sentences referring to multiple people. In a previous post, we talked through our experiments adapting systems to correct gender-based mistakes in machine translation. Here we take a look at the implications of those approaches.
+We develop them further, introducing a way to explicitly guide gender translation and exploring a framework for translating gender beyond the binary. Read on for a summary of how we did this and what we found, or see our GeBNLP 2020 paper, “Neural machine translation doesn’t translate gender coreference right unless you make it”, for all the details.
+What’s the problem?
+Machine translation really struggles at getting the grammatical gender of human entities right when translating from English into a language with grammatical gender like Spanish or German.
+Google translation of “The doctor finished her work” into German incorrectly has the masculine form of “the doctor”
+Google English-to-German translation, performed Jan 21. The gender translation is inconsistent and incorrect.
+And it’s even harder for sentences where there is more than one human entity, who may have different genders.
+English-Spanish translation for two sentences with two entities each. The feminine sentence translation is incorrect.
+Google Translate English-to-Spanish translations, performed Nov 20. Coping with model gender biases becomes more difficult for sentences that reference multiple people, as in these examples from the WinoMT gender test set.
+This can cause a number of problems depending on the target use of the translation — and there are many possible uses for machine translation. Direct issues could include misgendering people via translation, or reinforcing social stereotypes by implying that doctors are always male, nurses always female, and so on.
+Then there are issues of misrepresentation. Imagine enquiring about a job via an email, but the email is viewed through a poor machine translation into a language where profession terms are often gendered. A bad translation could effectively put words in your mouth, implying you had biased views on gender roles.
+Our previous paper explored ways to make machine translation less sensitive to pre-existing biases in the data. It did this by adapting to new data, then correcting bias-related mistakes in a translation. But it didn’t let you specify the gender of a particular entity — such as the doctor or nurse in the example above.
+New idea: gender-tagged adaptation sentences
+Previously we were trying to introduce models to male/female-balanced sentences about jobs with “synthetic” data like this:
+The [profession] finished [his|her] work.
+In this paper we introduce the new idea of tagging entities in these adaptation sentences, with “tagged synthetic” examples like so:
+The [profession] [M|F] finished the work.
+We remove the pronoun, his/her , in this set. Otherwise the model could ignore the tag completely and just rely on the pronoun. That’s because, for example, every sentence with a [M] tag would also contain the word “his”.
+Importantly there do not need to be any gender tags at all in the original training data: we’re seeing whether we can adapt the system to tagged data.
+We also want to see if it makes a difference to explicitly introduce the idea that multiple entities with different genders can occur in the same sentence, so we also test a third “tagged synthetic coreference” set where the model must learn which tag is coreferent with which entity:
+The [profession1] [M|F] and the [profession2] [M|F] finished the work.
+We also experiment with other variations on these tagging systems in the paper.
+As with the earlier paper, we adapt the original model to these tiny sets of fewer than 400 sentences. Then we use the adapted model to “correct” gender-based mistakes in the original translations.
+Tags don’t change gender accuracy much — and that’s what we want
+As for the previous paper, we assess gender accuracy using the WinoMT challenge set. Where we use tags in the adaptation data, we also add them to the English side of WinoMT — this can be done automatically and quite reliably using tools like RoBERTa, but for simplicity the following results are for the ideal situation where we have the correct tags for each sentence.
+We find that adapting to sentences with tags has little effect on gender accuracy for English-to-German translation. For English to Spanish translation, accuracy improves quite strongly when tags are introduced.
+Plot showing improving accuracy with added tags for Spanish, and accuracy not changing much for German
+Tags improve Spanish gender accuracy and have little effect on German
+This is a good outcome, because we weren’t necessarily aiming to improve gender accuracy by adding tags. That improvement is just a useful bonus.
+The real reason we want to introduce tags is to deal with a different situation: entity-specific gender control and the problem of overgeneralization.
+The curse of overgeneralization: two entities are harder than one.
+To see why introducing tags is an important step, consider a machine translation system dealing with one of the examples above:
+The doctor told the patient that she would be on vacation next week
+If a model has learned that a feminine pronoun like “she” is a trigger for feminine inflections of profession words, it might hedge its bets and translate both entities with feminine inflections. That is, the machine translation would have a female doctor and a female patient.
+That might be better than defaulting to social stereotypes, but it’s still not ideal for two reasons:
+Some languages have conventions that ambiguously gendered words (e.g. the patient in this example) should be left masculine.
+We might have some additional context about the gender of the patient that we want to introduce.
+Using tags, we could specify:
+The doctor [F] told the patient that she would be on vacation next week
+This indicates that we have some information about gender inflection for the “doctor” entity, but that we don’t know anything yet about the patient.
+Measuring overgeneralization
+We measure the overgeneralization effect with a metric we call “L2”, which indicates how often the second entity — the one about which we have no gender information — is inflected according to the sentence’s single pronoun. In particular, we are interested in ∆L2, which shows how much this is changing over the baseline. High ∆L2 means we’re over-generalizing the new pronoun sensitivity or the new tag, which is not what we want.
+Plot showing delta L2 high for the synthetic and tagged synthetic systems, and very low for tagged synthetic coreference.
+The overgeneralization effect is real. But tags mitigate the effect somewhat, and tagged coreference sentences almost eliminate it.
+Looking at the results, we see that:
+Simply adapting to untagged synthetic data overgeneralizes very strongly.
+Adapting with tags to one-entity-per-example sentences overgeneralizes somewhat less, especially for English-Spanish.
+Adapting with tags to two-entity-per-example sentences barely overgeneralizes at all.
+So the overgeneralization effect is real — increasing sensitivity to pronouns in test sentences can mitigate social bias effects without really getting gender right! But by introducing tags into our adapt-then-correct scheme, we can specify whatever gender information we have, with far reduced risk of overgeneralization.
+Towards gender-inclusive coreference translation
+The other element of the earlier work we wanted to address was extending the approach beyond the binary. Non-binary people are often ignored by work on gender in machine translation. One major reason is that gendered languages may have only recent or isolated examples of non-binary linguistics.
+In English, singular “they” has been in use for centuries, and many people have a preference for they/them pronouns. But languages with binary grammatical gender may imply gender in many types of words, such as profession terms or adjectives.
+Developing gender-neutral or non-binary language in these cases involves deeper changes to language use than just pronouns or titles. And speakers will have a range of different conventions or preferences, so this is an ongoing social process.
+For these reasons, instead of trying to specify one “correct” way to inflect Spanish or German in a gender-neutral manner, we develop a framework to work with. And because we’ve already introduced tags, we hope to signal the system when to use this framework.
+We use placeholder inflections and articles. For example, if the masculine and feminine forms of “the doctor” in Spanish are “el médico” and “la médica”, the neutral form could be “[DEF] médic[W_END]”. Here [DEF] could be easily be replaced in post-processing for the definite article of choice, and [W_END] for the word-ending inflection of choice. We also add a neutral tag for the relevant sentences, [N], in addition to the [M] and [F] tags already used.
+We also make some adjustments to WinoMT so it has the same number of neutral sentences as masculine or feminine sentences, with singular “they” as the English pronoun [1].
+And finally we add additional sentences with singular “they” in English and new inflections in German/Spanish to the adaptation sets. The synthetic sets now contain sentences like this:
+Synthetic: The [profession] finished [his|her|their] work.
+Tagged synthetic: The [profession] [M|F|N] finished the work.
+Tagged synthetic coreference: The [profession1] [M|F|N] and the [profession2] [M|F|N] finished the work.
+Gender tags can encourage use of new gender inflections
+Once again, we assess gender translation accuracy first, this time just on the newly added neutral WinoMT sentences.
+Accuracy increases significantly from untagged to tagged synthetic coreference, but maximum accuracy is <40%
+New inflections are used significantly more after adaptation, but overall accuracy is low.
+First, we find that the new inflections and articles don’t actually get used when adapting without tags, even though the inflections are present in the synthetic set [2].
+This might be because singular `they/them’ is relatively common in English, and so the models have some pre-existing concept of how to translate `they’ into German or Spanish.
+We do see some interesting differences in performance between the language pairs, which might be because of linguistic properties, like Spanish having a neutral singular possessive pronoun. Or it might be a consequence of the German baseline model being much stronger and harder to change.
+Comparing to the binary accuracy plot we saw before, the range is much lower — remembering that the baseline model has never seen these new inflections before. As well, though, using tags here is noticeably better than the untagged approach. But there’s clearly still work to be done here.
+∆L2: New neutral gender tags may be easier to over-generalize
+When comparing ∆L2 we see that adapting to tagged single entities can actually make things worse. This is interesting compared to the binary case, where tags consistently improve matters.
+∆L2 is highest for the tagged synthetic set, but far lower for the tagged synthetic coreference set.
+New inflections may be more overgeneralized with tags, but providing coreference examples helps.
+Again, however, providing two-entity coreference examples seems to be the best option.
+To conclude, machine translation doesn’t translate gender coreference right…
+In this summary article — and in our paper — we showed that neural machine translation:
+Is susceptible to gender bias effects
+Over-generalizes gender signals to multiple entities, without actually resolving coreference
+Is unlikely to use new language e.g. neopronouns, even when provided with examples
+… Unless you make it
+But we also showed that it’s possible to introduce gender translation control on a per-entity level:
+Gender tags for each entity have a potentially powerful impact on gender inflection translation
+Tags can encourage adaptation to, and use of, new language
+Tagged coreference examples can minimize peripheral effects
+Work on improving gender translation has progressed extremely rapidly in recent years, so hopefully this and the previous paper will be useful primers on possibilities and pitfalls for those becoming interested in the area.
+[1] While singular non-binary pronouns other than “they” have long been used in English, such neopronouns are unlikely to already have been “seen” by the model. Since we’re already introducing new terminology in the Spanish sentences, we want to avoid confounding their effects by adding new English terms as well.
+[2] The baseline achieves non-zero accuracy even though it knows nothing about the inflections, because a small number of original WinoMT sentences were tagged as neutral with the neutral entity “somebody”.
