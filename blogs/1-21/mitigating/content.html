@@ -53,8 +53,12 @@
 
 <p>When we look at words that are gendered in the target language, like “doctor”, we find that they are often skewed towards examples with either a masculine or feminine gendered form.</p>
 
-Image for post
-Frequency per million words of the masculine and feminine forms of German profession terms in a 23 million word English-German dataset, mainly sourced from news reports
+<figure>
+  <img src="fig1.png" alt="Plot of frequency for masculine and feminine forms of German profession words. The masculine forms are many times frequent for all except nurse" style="width:80%">
+    <figcaption>Frequency per million words of the masculine and feminine forms of German profession terms in a 23 million word English-German dataset, mainly sourced from news reports.</figcaption>
+</figure>
+
+
 
 <p>For example, there are far more examples of masculine doctors in the German training examples. This may be that there are more male doctors in the dataset, or it may be due to a convention of using the masculine as the default if there’s no other context, as in the sentence “Doctors agree on this.”</p>
 
@@ -67,9 +71,11 @@ Frequency per million words of the masculine and feminine forms of German profes
 <p>It also happens when there’s a pronoun in the sentence to be translated, like in this German example, which is inconsistent: “The doctor” is translated with the masculine and “her work” with the correct feminine. [1]</p>
 
 
-Google Translate translates English sentences “The doctor finished her work” to German with a masculine “The doctor”.
 
-English-to-German translation, performed Jan 21. The gender translation is inconsistent and incorrect.
+<figure>
+  <img src="fig2.png" alt="Google Translate translates English sentences “The doctor finished her work” to German with a masculine “The doctor”." style="width:80%">
+    <figcaption>English-to-German translation, performed Jan 21. The gender translation is inconsistent and incorrect.</figcaption>
+</figure>
 
 
 <p>Google’s own scheme for addressing gender bias in machine translation is to provide two versions of the translation, one using a masculine form and one using the feminine one.</p>
@@ -78,15 +84,16 @@ English-to-German translation, performed Jan 21. The gender translation is incon
 
 <p>But when translating an example where the gender can be reasonably inferred from the original sentence, like this English-to-Spanish example, it seems like there should be a better way.</p>
 
+<figure>
+  <img src="fig3.png" alt="Google Translate translates English sentences “The doctor finished her work” to Spanish with two gendered options." style="width:80%">
+    <figcaption>English-to-Spanish translation, performed Jan 21. Google produces gender-specific translations for some language to cope with gender ambiguity. This sentence doesn’t seem that ambiguous.</figcaption>
+</figure>
 
-Google Translate translates the English “the doctor finished her work” to masculine and feminine Spanish versions.
+<figure>
+  <img src="fig4.png" alt="Google Translate translates the English “the doctor finished his work” to the masculine Spanish version only." style="width:80%">
+    <figcaption>English-to-Spanish translation, performed Jan 21. The masculine form isn’t read as ambiguous.</figcaption>
+</figure>
 
-English-to-Spanish translation, performed Jan 21. Google produces gender-specific translations for some language to cope with gender ambiguity. This sentence doesn’t seem that ambiguous.
-
-Google Translate translates the English “the doctor finished his work” to the masculine Spanish version only.
-
-
-English-to-Spanish translation, performed Jan 21. The masculine form isn’t read as ambiguous.
 
 
 <p>To emphasize, this isn’t just about a lazy reliance on stereotypes where there’s no other information to go by. This is about lazy reliance on stereotypes which run counter to the clear meaning of the source sentenc.</p>
@@ -102,7 +109,12 @@ English-to-Spanish translation, performed Jan 21. The masculine form isn’t rea
 
 <p>The WinoMT test set is a test set for evaluating this problem when translating from English into languages with richer grammatical gender. It contains about 4000 sentences, each with two human-referent words and one pronoun.</p>
 
-The English sentence “the doctor asked the nurse to help her”, with a Spanish translation linking “her” to “the nurse”. From “Evaluating Gender Bias in Machine Translation”, Stanovsky et al 2019. The English sentence is from WinoMT. The Spanish translation has matched the pronoun to the wrong person.
+
+<figure>
+  <img src="fig5.png" alt="The English sentence “the doctor asked the nurse to help her”, with a Spanish translation linking “her” to “the nurse”." style="width:80%">
+    <figcaption> From “Evaluating Gender Bias in Machine Translation”, Stanovsky et al 2019. The English sentence is from WinoMT. The Spanish translation has matched the pronoun to the wrong person.</figcaption>
+</figure>
+
 
 
 <p>The main objective is improving gender accuracy for the profession connected to the pronoun, although in the paper we also explore more detailed results, like the different performance on masculine and feminine labelled sentences.</p>
@@ -136,10 +148,12 @@ The [adjective] [man|woman] finished [his|her] work
 
 <p>And experimentally, we don’t find adapting to the “natural” counterfactual set improves WinoMT gender accuracy very much over the baseline model.</p>
 
-Bar plot: WinoMT gender accuracy strong gains over the baseline for the handcrafted set, and far less for counterfactual
+<figure>
+  <img src="fig6.png" alt="Bar plot: WinoMT gender accuracy strong gains over the baseline for the handcrafted set, and far less for counterfactual" style="width:80%">
+    <figcaption>WinoMT gender accuracy when adapting the baseline model to a large natural counterfactual set, and when adapting the baseline to the tiny “handcrafted” set. NB: a model that picks masculine or feminine inflections at random would score 50% accuracy on this dataset.</figcaption>
+</figure>
 
 
-WinoMT gender accuracy when adapting the baseline model to a large natural counterfactual set, and when adapting the baseline to the tiny “handcrafted” set. NB: a model that picks masculine or feminine inflections at random would score 50% accuracy on this dataset.
 
 <h3>“Catastrophic forgetting” during adaptation: gender accuracy improves but general translation ability drops.</h3>
 <p>The seemingly inevitable trade-off of neural network adaptation is that the model learns to do new things, but loses the ability to do whatever it could do before.</p>
@@ -147,9 +161,12 @@ WinoMT gender accuracy when adapting the baseline model to a large natural count
 
 <p>In this case, what it could do before is translate a wide range of sentences into a target language. Machine translation quality is measured by BLEU score, with 0 BLEU being complete nonsense and 100 BLEU being a translation that perfectly matches some human translation.</p>
 
-Bar plot showing BLEU score decreasing compared to the baseline as the models are adapted
+<figure>
+  <img src="fig7.png" alt="Bar plot showing BLEU score decreasing compared to the baseline as the models are adapted" style="width:80%">
+    <figcaption>BLEU score decreasing compared to the baseline when models are adapted to the handcrafted dataset.</figcaption>
+</figure>
 
-BLEU score decreasing compared to the baseline when models are adapted to the handcrafted dataset.
+
 
 <p>Checking BLEU score on standard test sets for the adapted models, we see the evidence of forgetting in reduced BLEU scores when strongly adapting to the handcrafted model.</p>
 
@@ -159,14 +176,18 @@ BLEU score decreasing compared to the baseline when models are adapted to the ha
 
 
 <h3>Idea: first adapt, then correct gender errors</h3>
-<p>The original model may be good at translating a wide range of sentences. But we know it struggles with human-referent gendered terms.</p>
+ <p>The original model may be good at translating a wide range of sentences. But we know it struggles with human-referent gendered terms.</p>
+
 <p>The adapted model can be highly specialized to translate these terms well. But most words are not human-referent gendered terms.</p>
+		  
 <p>Our idea is to generate a first-pass translation with the original model, and then a second translation with the adapted model. But crucially, the adapted model can only change words in the original translation to other forms of the same word with different grammatical gender.</p>
+
 <p>For example, in English, the model might be allowed to change between “his”, “her” and “their”, as differently gendered possessive pronouns. It could change between “actor” and “actress” as two gendered inflections of that word. However, it wouldn’t be allowed to change the word “his” to “actor”. And the words “the”, “memorized”, and “script” would all remain unchanged, because they have no alternate gendered forms in English.</p>
 
-English example of words allowed to change to their alternate gendered forms for “the actor memorized his script”
-
-		  <p>Words can be changed to other gender inflected versions, but not to unrelated words.</p>
+<figure>
+  <img src="fig8.png" alt="English example of words allowed to change to their alternate gendered forms for “the actor memorized his script”" style="width:80%">
+    <figcaption>Words can be changed to other gender inflected versions, but not to unrelated words.</figcaption>
+</figure>
 		  
 		  <p>A walkthrough for this process with links to a drive account with scripts and data can be found at our github.</p>
 		  
