@@ -1,174 +1,161 @@
-#banner
+banner
 {
    width: 100%;
    margin-top: 0.2em;
-}
-.newsletter-box
-{
-   background-color: #c32526;
-   margin-top: 0.2em;
-}
-
-#newsletter-box
-{
-   margin-top: 0.5em;
-   height: 1.8em;
-   padding: 0.3em;
-}
-
-#mobile-newsletter-box
-{
-   display: none;
-}
-
-#newsletter-email
-{
-   width: 12em;
-   -webkit-transition: all 1s;
-   -moz-transition: width 1s;
-   -o-transition: width 1s;
-   -ms-transition: width 1s;
-   transition: width 1s;
-}
-
-#newsletter-email:focus
-{
-   width: 17em;
-}
-ul.menu-list
-{
-   list-style-type: none;
-   padding: 0;
-   margin: 1em 0em;
    text-align: center;
 }
 
-li.menu-item
-{
-   display: inline;
-   margin: 0em 1.5em;
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+.image {
+    float: right;
+    margin-bottom: -5px;
+    background-color: hsl(277, 73%, 32%);
+    border: 0px solid;
 }
 
-a.menu-item-link
-{
-   font-family: &amp;quot;Bebas Neue&amp;quot;,Calibri,Arial,Helvetica,sans-serif;
-   font-size: 1.3em;
-   text-decoration: none;
-   color: #c31f05;
-position: relative;
-
+img {
+    /
+    max-width: 100%;
+    height: auto;
+    opacity: 0.4;
 }
 
-a.menu-item-link:hover
-{
-   color: #000000;
+body {
+    background-color: hsl(233, 47%, 7%);
+    font-size: 20px;
+    text-align: center;
 }
 
-a.menu-item-link:active
-{
-   top: 0.1em;
-   left: 0.1em;
+.box {
+    background-color: hsl(244, 38%, 16%);
+    border: 0px solid;
+    border-radius: 10px;
+    margin-right: 140px;
+    margin-left: 140px;
+    margin-top: 160px;
+    min-height: 446px;
+    height: auto;
+    text-align: center;
+    overflow: hidden;
 }
 
-#menu-select
-{
-   display: none;
-}
-body
-{
-   max-width: 1024px;
-   margin: 0 auto;
-   font-family: &amp;quot;Cwmagic&amp;quot;,Calibri,Arial,Helvetica,sans-serif;
-   background-color: #E3E3E3;
-   font-size: 1.2em;
-   line-height: 1.5em;
+.text {
+    margin-top: 60px;
 }
 
-img
-{
-   border: 0em;
+.insights {
+    color: hsl(277, 64%, 61%);
 }
 
-h1,
-h2,
-h3
-{
-   text-align: center;
+.main-heading {
+    color: hsl(0, 0%, 100%);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    text-align: left;
+    width: 450px;
+    margin-top: -30px;
+    letter-spacing: -1px;
 }
 
-.float-left
-{
-   float: left;
+.main-paragraph {
+    margin-top: -30px;
+    font-size: 16px;
+    color: hsla(0, 0%, 100%, 0.75);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    width: 350px;
+    text-align: left;
+    letter-spacing: 0.5px;
 }
 
-.float-right
-{
-   float: right;
+.stat-headings {
+    margin-top: 20px;
+    text-align: justify;
 }
 
-.clear-both
-{
-   clear: both;
+.stat-top {
+    color: hsl(0, 0%, 100%);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
 }
 
-.shadow
-{
-   -webkit-box-shadow: 0.4em 0.4em 0.2em #5C5B5B;
-   -moz-box-shadow: 0.4em 0.4em 0.2em #5C5B5B;
-   -o-box-shadow: 0.4em 0.4em 0.2em #5C5B5B;
-   -ms-box-shadow: 0.4em 0.4em 0.2em #5C5B5B;
-   box-shadow: 0.4em 0.4em 0.2em #5C5B5B;
-   margin-right: 0.4em !important;
+.stat-bottom {
+    color: hsla(0, 0%, 100%, 0.6);
+    font-family: 'Lexend Deca', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
-.long-box,
-.small-box
-{
-   background-color: #cdcdcd;
-   padding: 0em 0.3em;
-   margin: 0em;
-   margin-bottom: 1em;
+.one,
+.two,
+.three {
+    display: inline-block;
+    width: 100px;
 }
 
-.small-box
-{
-   width: 47%;
+.image,
+.text {
+    display: inline-block;
 }
 
-p
-{
-   margin-top: 0;
-   margin-bottom: 0.5em;
-}
-#main-footer
-{
-   background-color: #c32526;
-   text-align: center;
+.attribution {
+    color: white;
 }
 
-.social-bar a
-{
-   text-decoration: none;
-   margin-right: 3em;
-}
- ***********************************
-       FONT FOR OTHER BROWSERS
- ***********************************
-*/
-@font-face
-{
-   font-family: &amp;quot;Bebas Neue&amp;quot;;
-   src:
-      local(&amp;quot;Bebas Neue&amp;quot;),
-      local(&amp;quot;Bebas Neue&amp;quot;),
-      url(&amp;quot;../css/bebasneue.ttf&amp;quot;);
-}
-
-@font-face
-{
-   font-family: &amp;quot;Palatino Linotype&amp;quot;;
-   src:
-      local(&amp;quot;Palatino Linotype&amp;quot;),
-      local(&amp;quot;Palatino Linotype&amp;quot;),
-      url(&amp;quot;../css/pala.ttf&amp;quot;);
+@media screen and (max-width: 500px) {
+    .box {
+        background-color: hsl(244, 38%, 16%);
+        border: 0px solid;
+        min-height: 346px;
+        height: auto;
+        text-align: center;
+        overflow: hidden;
+        width: 330px;
+        margin-right: 5px;
+        margin-left: 15px;
+        margin-bottom: 80px;
+        margin-top: 30px;
+    }
+    img {
+        margin-bottom: -5px;
+    }
+    .main-heading {
+        color: hsl(0, 0%, 100%);
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        width: 285px;
+        text-align: center;
+        margin-top: -30px;
+        margin-left: 20px;
+    }
+    .main-paragraph {
+        margin-top: -30px;
+        font-size: 16px;
+        color: hsla(0, 0%, 100%, 0.75);
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        width: 290px;
+        text-align: center;
+        margin-left: 25px;
+        margin-bottom: -10px;
+    }
+    .stat-headings {
+        margin-top: 20px;
+        text-align: justify;
+    }
+    .one,
+    .two,
+    .three {
+        display: block;
+        width: 100px;
+        margin-left: 35%;
+        text-align: center;
+        margin-top: px;
+        margin-bottom: 30px
+    }
 }
